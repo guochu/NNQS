@@ -44,14 +44,14 @@ function parallel_energy_and_grad(h::Hamiltonian, sampler::AbstractSampler, nnqs
 
 	println("total number of samples is $(sum([length(energies_∂θs[i].energies) for i in 1:length(energies_∂θs)]))")
 
-	E_loc, grad = NNQS.compute_energy_and_grad(aggregate(energies_∂θs))
+	E_loc, grad = NNQS.compute_energy_and_grad(aggregate(energies_∂θs), parameters(Flux.params(nnqs)), λ=λ)
 
 	if verbosity >= 1
 		mean_energies = [mean(energies_∂θs[i].energies) for i in 1:length(energies_∂θs)]
 		println("Ē = $E_loc ± $(std(mean_energies))")
 	end
 
-	return E_loc, NNQS._regularization!(grad, parameters(Flux.params(nnqs)), λ)
+	return E_loc, grad
 
 end
 
@@ -63,14 +63,14 @@ function parallel_energy_and_grad_sr(h::Hamiltonian, sampler::AbstractSampler, n
 
 	println("total number of samples is $(sum([length(energies_∂θs[i].energies) for i in 1:length(energies_∂θs)]))")
 
-	E_loc, grad = NNQS.compute_energy_and_grad_sr(aggregate(energies_∂θs), diag_shift=diag_shift)
+	E_loc, grad = NNQS.compute_energy_and_grad_sr(aggregate(energies_∂θs), parameters(Flux.params(nnqs)), diag_shift=diag_shift, λ=λ)
 
 	if verbosity >= 1
 		mean_energies = [mean(energies_∂θs[i].energies) for i in 1:length(energies_∂θs)]
 		println("Ē = $E_loc ± $(std(mean_energies))")
 	end
 
-	return E_loc, NNQS._regularization!(grad, parameters(Flux.params(nnqs)), λ)
+	return E_loc, grad
 
 end
 

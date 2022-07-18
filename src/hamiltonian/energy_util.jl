@@ -67,11 +67,11 @@ end
 energies_and_grads_one_chain(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler) = energies_and_grads_one_chain(
 	h, nnqs, generate_samples(sampler, nnqs))
 
-function _compute_energy_and_grad(energies::Vector{<:Number}, θs::Vector{<:Vector})
+function _compute_energy_and_grad(energies::Vector{<:Number}, θs::Vector{<:Vector}, paras::Vector{<:Number}, λ::Real)
 	E, grad, ∂θ = compute_energy_and_grad_util(energies, θs)
-	return E, grad
+	return E, _regularization!(grad, paras, λ)
 end
-compute_energy_and_grad(m::EnergiesGrads) = _compute_energy_and_grad(m.energies, m.grads)
+compute_energy_and_grad(m::EnergiesGrads, paras::Vector{<:Number}; λ::Real = 1.0e-6) = _compute_energy_and_grad(m.energies, m.grads, paras, λ)
 
 function compute_energy_and_grad_util(energies::Vector{<:Number}, θs::Vector{<:Vector})
 	n_sample = length(energies)
@@ -92,14 +92,23 @@ function _mean(θs::Vector{<:Vector})
 	return m
 end
 
-function _compute_energy_and_grad_sr(energies::Vector{<:Number}, θs::Vector{<:Vector}; diag_shift::Real=1.0e-2)
+# function _compute_energy_and_grad_sr(energies::Vector{<:Number}, θs::Vector{<:Vector}, paras::Vector{<:Number}; diag_shift::Real=1.0e-2, λ::Real = 1.0e-6)
+#  	E_loc, grad, ∂θ = compute_energy_and_grad_util(energies, θs)
+# 	∂θ∂θ = compute_∂θ∂θ(θs)
+# 	# S = ∂θ∂θ - reshape(kron(conj(∂θ), ∂θ), length(∂θ), length(∂θ))
+# 	S = reshape(_inplace_kron!(∂θ∂θ, ∂θ, -1), length(∂θ), length(∂θ))
+# 	return E_loc, _regularization!(stable_solve(S, grad, diag_shift=diag_shift), paras, λ)
+# end
+
+function _compute_energy_and_grad_sr(energies::Vector{<:Number}, θs::Vector{<:Vector}, paras::Vector{<:Number}; diag_shift::Real=1.0e-2, λ::Real = 1.0e-6)
  	E_loc, grad, ∂θ = compute_energy_and_grad_util(energies, θs)
 	∂θ∂θ = compute_∂θ∂θ(θs)
 	# S = ∂θ∂θ - reshape(kron(conj(∂θ), ∂θ), length(∂θ), length(∂θ))
 	S = reshape(_inplace_kron!(∂θ∂θ, ∂θ, -1), length(∂θ), length(∂θ))
-	return E_loc, stable_solve(S, grad, diag_shift=diag_shift)
+	return E_loc, stable_solve(S, _regularization!(grad, paras, λ), diag_shift=diag_shift)
 end
-compute_energy_and_grad_sr(m::EnergiesGrads; kwargs...) = _compute_energy_and_grad_sr(m.energies, m.grads; kwargs...)
+
+compute_energy_and_grad_sr(m::EnergiesGrads, paras::Vector{<:Number}; kwargs...) = _compute_energy_and_grad_sr(m.energies, m.grads, paras; kwargs...)
 
 function compute_E∂θ(energies::Vector{<:Number}, θs::Vector{<:Vector})
 	n_sample = length(energies)

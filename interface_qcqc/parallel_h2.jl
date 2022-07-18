@@ -11,7 +11,7 @@ using Flux, Flux.Optimise
 
 function test_gs_energy()
 
-    molecule = "n2"
+    molecule = "lih"
 
     data_path = "mol_ham_data/$molecule/"
 
@@ -27,7 +27,8 @@ function test_gs_energy()
 	n_visible = L
     println("total number of qubits $L")
 	# Random.seed!(3467891)
-	rbm = FCN(Float64, n_hidden=n_hidden, n_visible=n_visible, activation=tanh)
+	# rbm = FCN(Float64, n_hidden=n_hidden, n_visible=n_visible, activation=tanh)
+    rbm = FCN(Float64, n_hidden=n_hidden, n_visible=n_visible)
     # real rbm
     # rbm = FCN(ComplexF64, n_hidden=n_hidden, n_visible=n_visible, activation=exp)
 
@@ -36,7 +37,7 @@ function test_gs_energy()
     n_sample_per_chain = div(n_sample, n_chain)
     println("n_sample_per_chain = $n_sample_per_chain")
 
-	sampler = Metropolis(n_visible, n_thermal=20000, n_sample_per_chain=n_sample_per_chain, n_discard= 100, mover=FermiBondSwap((4,4)))	
+	sampler = Metropolis(n_visible, n_thermal=20000, n_sample_per_chain=n_sample_per_chain, n_discard= 100, mover=FermiBondSwap((-2,-2)))	
     # sampler = Metropolis(n_visible, n_thermal=20000, n_sample_per_chain=4000, n_discard=100, mover=BondSwap(charge=0))
     # sampler = Metropolis(n_visible, n_thermal=10000, n_sample_per_chain=2000, n_discard=100, mover=BitFlip())
 
