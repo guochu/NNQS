@@ -76,4 +76,4 @@ function test_gs_energy()
     return losses
 end
 
-# test_gs_energy()
+test_gs_energy()

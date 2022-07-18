@@ -10,7 +10,7 @@ using Flux, Flux.Optimise
 
 function test_gs_energy()
 
-    data_path = "mol_ham_data/lih/"
+    data_path = "mol_ham_data/h2/"
 
     op = read_binary_qubit_op( data_path * "qubit_op.data")
     ham = MolecularHamiltonian(op)
@@ -20,7 +20,7 @@ function test_gs_energy()
     ham_s = MolecularHamiltonian(op_s)
     # println(ham_s)
     L = ham.n_qubits
-	n_hidden = 2*L
+	n_hidden = L
 	n_visible = L
     println("total number of qubits $L")
 	# Random.seed!(3467891)
@@ -29,7 +29,7 @@ function test_gs_energy()
     n_chain_per_rank = 10
     n_sample_per_chain = div(n_sample, n_chain_per_rank)
 	rbm = FCN(Float64, n_hidden=n_hidden, n_visible=n_visible, activation=tanh)
-	sampler = Metropolis(n_visible, n_thermal=20000, n_sample_per_chain=n_sample_per_chain, n_discard= 100, mover=FermiBondSwap((-2,-2)))	
+	sampler = Metropolis(n_visible, n_thermal=20000, n_sample_per_chain=n_sample_per_chain, n_discard= 100, mover=FermiBondSwap((0,0)))	
     # sampler = Metropolis(n_visible, n_thermal=20000, n_sample_per_chain=4000, n_discard=100, mover=BondSwap(charge=0))
     # sampler = Metropolis(n_visible, n_thermal=10000, n_sample_per_chain=2000, n_discard=100, mover=BitFlip())
 
@@ -37,7 +37,7 @@ function test_gs_energy()
 	# gradient descent algorithm using ADAM 
 
 	learn_rate = 0.01
-	epoches = 500
+	epoches = 200
 	opt = ADAM(learn_rate)
 
     paras = Flux.params(rbm)
@@ -71,4 +71,4 @@ function test_gs_energy()
     return losses
 end
 
-# test_gs_energy()
+test_gs_energy()
