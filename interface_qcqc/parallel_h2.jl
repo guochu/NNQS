@@ -28,6 +28,8 @@ function test_gs_energy()
     println("total number of qubits $L")
 	# Random.seed!(3467891)
 	rbm = FCN(Float64, n_hidden=n_hidden, n_visible=n_visible, activation=tanh)
+    # real rbm
+    # rbm = FCN(ComplexF64, n_hidden=n_hidden, n_visible=n_visible, activation=exp)
 
     n_sample = 20000
     n_chain = nworkers()
