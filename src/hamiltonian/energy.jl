@@ -1,7 +1,7 @@
 
 
 function energy(h::Hamiltonian, sampler::AbstractSampler, nnqs::AbstractNNQS)
-	samples = generate_samples(sampler, nnqs)
+	samples = generate_samples(h, sampler, nnqs)
 	_energies = [local_energy_single(h, nnqs, view(samples, :, j)) for j in 1:size(samples, 2)]
 	return mean(_energies)
 end

@@ -96,16 +96,6 @@ function update!(sampler::Metropolis, nnqs::AbstractNNQS, state::ComputationBasi
 	return state
 end
 
-function generate_samples(m::Metropolis, nnqs::AbstractNNQS)
-	state = init_state(m.N, m.mover)
-	work_state = copy(state)
-	thermalize!(m, nnqs, state, work_state)
-	samples = zeros(Int, m.N, m.n_sample_per_chain)
-	for i in 1:m.n_sample_per_chain
-		samples[:, i] = update!(m, nnqs, state, work_state)
-	end
-	return samples
-end
 
 
 

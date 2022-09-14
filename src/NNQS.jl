@@ -7,7 +7,7 @@ module NNQS
 # 4) The variational Monte Carlo algorithm, the essense of which is to evaluate the gradients.
 # 5) The Hamiltonian representation which allows to efficiently derive coupled states given an computational basis
 
-using Random, Distributions, LinearAlgebra
+using Random, LinearAlgebra, Statistics
 using Zygote, Flux
 using Zygote: Params, Grads
 
@@ -20,7 +20,7 @@ export AbstractNNQS, Ψ, FCN, RBM
 
 # sampler
 export BitFlip, BondSwap, FermiBondSwap, move!
-export AbstractSampler, MetropolisLocal, Metropolis, thermalize!, update!, init_state, generate_samples!
+export AbstractSampler, MetropolisLocal, Metropolis, thermalize!, update!, init_state, generate_samples
 
 
 # hamiltonian

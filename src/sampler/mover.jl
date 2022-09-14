@@ -24,6 +24,7 @@ FermiBondSwap(;charge::Tuple{Int, Int}=(0, 0)) = FermiBondSwap(charge)
 	The functionn move! is the only interface function needed for a customized StateChangeRule.
 """
 move!(state::ComputationBasis, sc::StateChangeRule) = error("move! not implemented for StateChangeRule type $(typeof(sc)).")
+_init_state(N::Int, sc::StateChangeRule) = error("_init_state not implemented for StateChangeRule type $(typeof(sc)).")
 
 function move!(state::ComputationBasis, sc::BitFlip)
 	site = rand(1:length(state))
@@ -32,18 +33,18 @@ function move!(state::ComputationBasis, sc::BitFlip)
 end
 
 """
-	init_state(N::Int, mover)
+	_init_state(N::Int, mover)
 	return a random initial state
 	This is an interface function which should be separately implemented for each StateChangeRule to incorperate symmetry
 """
-init_state(N::Int, mover::BitFlip) = rand(-1:2:1, N)
+_init_state(N::Int, mover::BitFlip) = rand(-1:2:1, N)
 
 function move!(state::ComputationBasis, sc::BondSwap)
 	site = rand(1:length(state)-1)
 	state[site], state[site+1] = state[site+1], state[site]
 	return state
 end
-function init_state(L::Int, mover::BondSwap)
+function _init_state(L::Int, mover::BondSwap)
 	charge = mover.charge
 	m_charge = _neural_charge(charge, L)
 	sites = _get_charged_sites(m_charge, L)
@@ -81,7 +82,7 @@ function move!(state::ComputationBasis, sc::FermiBondSwap)
 	# state[2*site_down], state[2*site_down+2] = state[2*site_down+2], state[2*site_down]
 	return state
 end
-function init_state(N::Int, mover::FermiBondSwap)
+function _init_state(N::Int, mover::FermiBondSwap)
 	@assert iseven(N)
 	charge = mover.charge
 	L = div(N, 2)

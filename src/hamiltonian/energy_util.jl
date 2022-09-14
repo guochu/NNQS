@@ -65,7 +65,7 @@ function energies_and_grads_one_chain(h::Hamiltonian, nnqs::AbstractNNQS, sample
 	return EnergiesGrads(energies, ∂θs)
 end
 energies_and_grads_one_chain(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler) = energies_and_grads_one_chain(
-	h, nnqs, generate_samples(sampler, nnqs))
+	h, nnqs, generate_samples(h, sampler, nnqs))
 
 function _compute_energy_and_grad(energies::Vector{<:Number}, θs::Vector{<:Vector}, paras::Vector{<:Number}, λ::Real)
 	E, grad, ∂θ = compute_energy_and_grad_util(energies, θs)
