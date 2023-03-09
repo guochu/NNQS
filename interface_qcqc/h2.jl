@@ -2,6 +2,7 @@ include("./mol_hamiltonian.jl")
 
 
 using Random
+push!(LOAD_PATH, "../src")
 using NNQS
 using Flux, Flux.Optimise
 

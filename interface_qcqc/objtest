@@ -1,0 +1,40 @@
+
+libcouple.so:	file format mach-o 64-bit x86-64
+
+SYMBOL TABLE:
+0000000000003790 l     F __TEXT,__text __ZL3powIiiENSt3__19_MetaBaseIXaasr3std13is_arithmeticIT_EE5valuesr3std13is_arithmeticIT0_EE5valueEE13_EnableIfImplINS0_9__promoteIS2_S3_vEEE4typeES2_S3_
+00000000000037c0 l     F __TEXT,__text __ZL3absd
+0000000000003d30 l     F __TEXT,__text __ZNSt3__1L15__get_nullptr_tEv
+0000000000003d60 l     F __TEXT,__text __ZNKSt3__19nullptr_tcvPT_I7__sFILEEEv
+0000000000003d70 l     F __TEXT,__text __ZNKSt3__19nullptr_tcvPT_I7tuple_tEEv
+0000000000003d80 l     F __TEXT,__text __ZNKSt3__19nullptr_tcvPT_IiEEv
+0000000000003de0 l     F __TEXT,__text __ZNSt3__19nullptr_tC1EMNS0_5__natEi
+0000000000003e10 l     F __TEXT,__text __ZNSt3__19nullptr_tC2EMNS0_5__natEi
+0000000000003e30 l     F __TEXT,__text ___cxx_global_var_init
+0000000000003e50 l     F __TEXT,__text __GLOBAL__sub_I_read_tran.cpp
+0000000000002f00 g     F __TEXT,__text _Hamtion_buffer
+0000000000003870 g     F __TEXT,__text __Z13read_qubit_opPKc
+0000000000003080 g     F __TEXT,__text __Z14coupled_statesPidii
+00000000000037e0 g     F __TEXT,__text __Z8imag_expi
+0000000000002e30 g     F __TEXT,__text __Z8state2idPKiii
+000000000000800c g     O __DATA,__common _global_n_qubit_op
+0000000000008008 g     O __DATA,__common _global_n_qubits
+0000000000008000 g     O __DATA,__common _h
+0000000000003d90 g     F __TEXT,__text _main
+0000000000002ea0 g     F __TEXT,__text _test_buffer
+0000000000000000         *UND* ____chkstk_darwin
+0000000000000000         *UND* ___stack_chk_fail
+0000000000000000         *UND* ___stack_chk_guard
+0000000000000000         *UND* ___stderrp
+0000000000000000         *UND* _calloc
+0000000000000000         *UND* _fclose
+0000000000000000         *UND* _feof
+0000000000000000         *UND* _fopen
+0000000000000000         *UND* _fprintf
+0000000000000000         *UND* _fread
+0000000000000000         *UND* _malloc
+0000000000000000         *UND* _memcpy
+0000000000000000         *UND* _memset
+0000000000000000         *UND* _pow
+0000000000000000         *UND* _printf
+0000000000000000         *UND* _realloc

@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct
+{
+    double rael;
+    double imag;
+} complex_t;
+
+typedef struct
+{
+    int **pauli_op;
+    complex_t coffe;
+    int pauli_num;
+} tuple_t;
+
+tuple_t* read_qubit_op(const char* filename){
+    //open the file
+    FILE* fp = fopen(filename, "rb");
+    if (fp == NULL) {
+        fprintf(stderr, "Failed to open file: %s\n", filename);
+        return NULL;
+    }
+
+    //read magic
+    double magic_number;
+    fread(&magic_number, sizeof(double), 1, fp);
+    if(magic_number != 11.2552){
+        fprintf(stderr, "Invalid file format: %s\n", filename);
+        fclose(fp);
+        return NULL;
+    }
+    //read qubit number
+    int n_qubits;
+    fread(&n_qubits, sizeof(int), 1, fp);
+
+    tuple_t* qubit_op = NULL;
+    int qubit_op_len = 0;
+
+
+    while (1)
+    {
+        tuple_t qubit_tmp;
+        fread(&(qubit_tmp.coffe), sizeof(complex_t), 1, fp);
+        if (feof(fp)){
+            break;
+        }
+        int qubit_op_tmp[n_qubits];
+        fread(qubit_op_tmp, sizeof(int), n_qubits, fp);
+        int cnt = 0;
+        int *pos_tmp = NULL;
+        int *op_tmp = NULL;
+        int flag_null = 0;
+        for (size_t i = 0; i < n_qubits; i++)
+        {
+            if(qubit_op_tmp[i] != 0){
+                pos_tmp = (int *)realloc(pos_tmp, ++cnt* sizeof(int));
+                int ctmp = cnt - 1;
+                pos_tmp[ctmp] = i;
+                op_tmp = (int *)realloc(op_tmp, cnt * sizeof(int));
+                op_tmp[ctmp] = qubit_op_tmp[i];
+            }
+        }
+
+
+        int** pauli_op_tmp = (int **)malloc(cnt * sizeof(int*));
+        for (int i = 0; i < cnt; i++) {
+            pauli_op_tmp[i] = (int *)calloc(2, sizeof(int));
+        }
+        for (size_t i = 0; i < cnt; i++)
+        {
+            pauli_op_tmp[i][0] = pos_tmp[i];
+            pauli_op_tmp[i][1] = op_tmp[i];
+            //printf("%d\t%d\n",pauli_op_tmp[i][0], pauli_op_tmp[i][1]);
+        }
+        
+        qubit_tmp.pauli_num = cnt;
+        qubit_tmp.pauli_op = pauli_op_tmp;
+        qubit_op_len++;
+        qubit_op = (tuple_t*) realloc(qubit_op, qubit_op_len * sizeof(tuple_t));
+        //printf("%d\n", qubit_tmp.pauli_num);
+        qubit_op[qubit_op_len - 1] = qubit_tmp;
+
+        if(qubit_op_len != 1){
+            for (size_t i = 0; i < qubit_op[qubit_op_len - 1].pauli_num; i++)
+                {
+                    //printf("%d\n", qubit_op[qubit_op_len - 1].pauli_num);
+                    if(i == qubit_op[qubit_op_len - 1].pauli_num - 1){
+                        printf("(%d,%d)\n",qubit_op[qubit_op_len - 1].pauli_op[i][0], qubit_op[qubit_op_len - 1].pauli_op[i][1]); 
+                    }else{
+                        printf("(%d,%d)\t",qubit_op[qubit_op_len - 1].pauli_op[i][0], qubit_op[qubit_op_len - 1].pauli_op[i][1]); 
+                    }
+                }
+        }    
+    }
+    fclose(fp);
+    return qubit_op;
+}
+
+int main(){
+    tuple_t* qubit_op = NULL;
+    qubit_op = read_qubit_op("/Users/zhoupengyu/Documents/ST_work/NNQS/interface_qcqc/mol_ham_data/h2/qubit_op.data");
+    
+    return 0; 
+}
+

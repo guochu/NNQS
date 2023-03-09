@@ -1,0 +1,11 @@
+dist= 2.2
+Running RHF...
+converged SCF energy = -7.80799436927298
+Running RCCSD
+E(CCSD) = -7.845659248262294  E_corr = -0.03766487898931442
+Hartree-Fock energy:  -7.8079943692729792 Ha
+CCSD energy:  -7.8456592482622938 Ha
+FCI energy:  -7.8456836231971856 Ha
+Number of qubits: 12
+Number of electrons: 4
+Qubit Hamiltonian saved to qubit_op.data.

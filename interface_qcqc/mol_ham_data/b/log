@@ -1,0 +1,13 @@
+Running RHF...
+converged SCF energy = -24.1489885988536
+Running RCCSD
+
+WARN: RCCSD method does not support ROHF method. ROHF object is converted to UHF object and UCCSD method is called.
+
+E(UCCSD) = -24.18925814604059  E_corr = -0.04026954718694138
+Hartree-Fock energy: -24.1489885988536486 Ha
+CCSD energy: -24.1892581460405900 Ha
+FCI energy: -24.1892649171005019 Ha
+Number of qubits: 10
+Number of electrons: 5
+Qubit Hamiltonian saved to qubit_op.data.
