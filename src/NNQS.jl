@@ -17,7 +17,7 @@ using Zygote: Params, Grads
 
 # neural network states
 export AbstractNNQS, Ψ, FCN, RBM
-export MPS, rightorth!, rightorth, isrightcanonical
+export MPS, rightorth!, rightorth, isrightcanonical, increase_bond!
 
 # sampler
 export BitFlip, BondSwap, FermiBondSwap, move!

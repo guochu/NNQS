@@ -6,8 +6,8 @@ using NNQS
 using Flux, Flux.Optimise
 
 
-import NNQS
-NNQS.init_state(h::MolecularHamiltonian, N::Int, mover::FermiBondSwap) = read_hf_state()
+# import NNQS
+# NNQS.init_state(h::MolecularHamiltonian, N::Int, mover::FermiBondSwap) = read_hf_state()
 
 
 function test_gs_energy()

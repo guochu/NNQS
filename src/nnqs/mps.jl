@@ -60,12 +60,12 @@ function max_bond_dimensions(physpaces::Vector{Int}, D::Int)
 	return virtualpaces
 end
 
-# bond_dimension(psi::MPS, bond::Int) = begin
-# 	((bond >= 1) && (bond <= length(psi))) || throw(BoundsError())
-# 	size(psi.data[bond], 3)
-# end 
-# bond_dimensions(psi::MPS) = [bond_dimension(psi, i) for i in 1:length(psi)]
-# bond_dimension(psi::MPS) = maximum(bond_dimensions(psi))
+bond_dimension(psi::MPS, bond::Int) = begin
+	((bond >= 1) && (bond <= length(psi))) || throw(BoundsError())
+	size(psi.data[bond], 3)
+end 
+bond_dimensions(psi::MPS) = [bond_dimension(psi, i) for i in 1:length(psi)]
+bond_dimension(psi::MPS) = maximum(bond_dimensions(psi))
 
 
 # prepare MPS in right-canonical form
@@ -90,6 +90,21 @@ function isrightcanonical(psij::AbstractArray{<:Number, 3}; kwargs...)
 	r = m2 * m2'
 	return isapprox(r, one(r); kwargs...) 
 end
+
+function increase_bond!(psi::MPS; D::Int)
+	if bond_dimension(psi) < D
+		virtualpaces = max_bond_dimensions([2 for i in 1:length(psi)], D)
+		for i in 1:length(psi)
+			sl = max(min(virtualpaces[i], D), size(psi.data[i], 1))
+			sr = max(min(virtualpaces[i+1], D), size(psi.data[i], 3))
+			m = zeros(eltype(psi), sl, size(psi.data[i], 2), sr)
+			m[1:size(psi.data[i], 1), :, 1:size(psi.data[i], 3)] .= psi.data[i]
+			psi.data[i] = m
+		end
+	end
+	return psi
+end
+
 
 # lq decomposition
 function tlq!(a::StridedMatrix) 
