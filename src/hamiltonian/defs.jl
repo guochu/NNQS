@@ -30,7 +30,7 @@ init_state(h::Hamiltonian, N::Int, mover::StateChangeRule) = _init_state(N, move
 
 """
 	generate_samples(h::Hamiltonian, m::Metropolis, nnqs::AbstractNNQS)
-	generate a fixed number of samples using MC sampling
+Generate a fixed number of samples using MC sampling
 """
 function generate_samples(h::Hamiltonian, m::Metropolis, nnqs::AbstractNNQS)
 	state = init_state(h, m.N, m.mover)
@@ -42,3 +42,13 @@ function generate_samples(h::Hamiltonian, m::Metropolis, nnqs::AbstractNNQS)
 	end
 	return samples
 end
+function generate_samples(h::Hamiltonian, m::AutoRegressiveSampler, nnqs::MPS)
+	@assert m.N == sys_size(nnqs)
+	samples = zeros(Int, m.N, m.n_sample_per_chain)
+	nnqs2 = rightorth(nnqs, normalize=true)
+	for i in 1:m.n_sample_per_chain
+		samples[:, i] = autoregressivesampling(nnqs2)
+	end	
+	return samples
+end
+

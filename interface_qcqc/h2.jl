@@ -6,6 +6,8 @@ using NNQS
 using Flux, Flux.Optimise
 
 
+import NNQS
+NNQS.init_state(h::MolecularHamiltonian, N::Int, mover::FermiBondSwap) = read_hf_state()
 
 
 function test_gs_energy()
@@ -40,8 +42,7 @@ function test_gs_energy()
 	epoches = 200
 	opt = ADAM(learn_rate)
 
-    paras = Flux.params(rbm)
-	x0 = parameters(paras)
+	x0, re = Flux.destructure(rbm)
     println("Number of parameters $(length(x0))")
 
 	losses = Float64[]
@@ -56,7 +57,7 @@ function test_gs_energy()
         # @time train_loss, grad = energy_and_grad(ham, sampler, rbm, n_chain_per_rank=n_chain_per_rank, seeds=seeds, λ=1.0e-5)
 
         Optimise.update!(opt, x0, grad)
-        reset!(paras, x0)
+        rbm = re(x0)
 
         push!(losses, real(train_loss))
         println("energy at the $i-th step is $(train_loss).")

@@ -34,5 +34,3 @@ sys_size(nnqs::AbstractNNQS) = error("sys_size not implemented for NNQS type $(t
 
 # this is required for better efficiency
 # Base.eltype(nnqs::AbstractNNQS) = error("eltype not implemented for NNQS type $(typeof(nnqs)).")
-
-

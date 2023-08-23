@@ -30,7 +30,7 @@ function energy_and_grad(h::Hamiltonian, sampler::AbstractSampler, nnqs::Abstrac
 	seeds::Union{Vector{Int}, Nothing}=nothing, λ::Real = 1.0e-6, verbosity::Int=1)
 	# samples = generate_samples(sampler, nnqs)
 	block_energies_∂θs = energy_and_grad_util_per_rank(h, sampler, nnqs, n_chain_per_rank=n_chain_per_rank, seeds=seeds)
-	E_loc, grad = compute_energy_and_grad(aggregate(block_energies_∂θs), parameters(Flux.params(nnqs)), λ=λ)
+	E_loc, grad = compute_energy_and_grad(aggregate(block_energies_∂θs), Flux.destructure(nnqs)[1], λ=λ)
 
 	if verbosity >= 1
 		mean_energies = [mean(block_energies_∂θs[i].energies) for i in 1:n_chain_per_rank]
@@ -44,7 +44,7 @@ function energy_and_grad_sr(h::Hamiltonian, sampler::AbstractSampler, nnqs::Abst
 	seeds::Union{Vector{Int}, Nothing}=nothing, diag_shift::Real=1.0e-2, λ::Real = 1.0e-6, verbosity::Int=1)
 	# samples = generate_samples(sampler, nnqs)
 	block_energies_∂θs = energy_and_grad_util_per_rank(h, sampler, nnqs, n_chain_per_rank=n_chain_per_rank, seeds=seeds)
-	E_loc, grad = compute_energy_and_grad_sr(aggregate(block_energies_∂θs), parameters(Flux.params(nnqs)), diag_shift=diag_shift, λ=λ)
+	E_loc, grad = compute_energy_and_grad_sr(aggregate(block_energies_∂θs), Flux.destructure(nnqs)[1], diag_shift=diag_shift, λ=λ)
 
 	if verbosity >= 1
 		mean_energies = [mean(block_energies_∂θs[i].energies) for i in 1:n_chain_per_rank]

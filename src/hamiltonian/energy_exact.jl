@@ -1,5 +1,4 @@
-
-
+# converting -1 and 1 into 2 and 1
 index_to_state(index) = [(index[i] == 2) ? -1 : 1 for i in 1:length(index)]
 state_to_index(state) = CartesianIndex(Tuple((item == -1) ? 2 : 1 for item in state))
 
@@ -75,7 +74,7 @@ function energy_and_grad_exact(h::Hamiltonian, nnqs::AbstractNNQS; λ::Real = 1.
 	∂θ ./= p_all
 	E∂θ ./= p_all
 
-	return E_loc, _regularization!(2 .* (E∂θ .- real(E_loc) .* ∂θ), parameters(Flux.params(nnqs)), λ)
+	return E_loc, _regularization!(2 .* (E∂θ .- real(E_loc) .* ∂θ), Flux.destructure(nnqs)[1], λ)
 end
 
 function energy_and_grad_sr_exact(h::Hamiltonian, nnqs::AbstractNNQS; diag_shift::Real=1.0e-4, λ::Real = 1.0e-6)
@@ -116,5 +115,5 @@ function energy_and_grad_sr_exact(h::Hamiltonian, nnqs::AbstractNNQS; diag_shift
  	# return E_loc, grad_sr
 
  	# return E_loc, stable_solve(S, grad, diag_shift=diag_shift)
-	return E_loc, _regularization!(stable_solve(S, grad, diag_shift=diag_shift), parameters(Flux.params(nnqs)), λ)
+	return E_loc, _regularization!(stable_solve(S, grad, diag_shift=diag_shift), Flux.destructure(nnqs)[1], λ)
 end

@@ -41,9 +41,10 @@ function local_energy_single(h::Hamiltonian, nnqs::AbstractNNQS, state::Computat
 end
 
 function local_energy_and_grad(h::Hamiltonian, nnqs::AbstractNNQS, state::ComputationBasis)
-	amp_state, back = Zygote.pullback( () -> Ψ(nnqs, state), Flux.params(nnqs) )
+	# amp_state, back = Zygote.pullback( () -> Ψ(nnqs, state), Flux.params(nnqs) )
+	amp_state, back = Zygote.pullback( m -> Ψ(m, state), nnqs )
 	_energy = local_energy_single(h, nnqs, state, amp_state)
-	grad = parameters(back(one(_energy)))
+	grad, re = Flux.destructure(back(one(_energy)))
 	grad ./= conj(amp_state)
 	return _energy, grad
 end

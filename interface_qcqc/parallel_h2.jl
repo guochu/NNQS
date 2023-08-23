@@ -23,12 +23,11 @@ function test_gs_energy()
     ham_s = MolecularHamiltonian(op_s)
     # println(ham_s)
     L = ham.n_qubits
-	n_hidden = 2*L
+	n_hidden = 2 * L
 	n_visible = L
     println("total number of qubits $L")
 	# Random.seed!(3467891)
-	# rbm = FCN(Float64, n_hidden=n_hidden, n_visible=n_visible, activation=tanh)
-    rbm = FCN(Float64, n_hidden=n_hidden, n_visible=n_visible)
+	rbm = FCN(Float64, n_hidden=n_hidden, n_visible=n_visible, activation=tanh)
     # real rbm
     # rbm = FCN(ComplexF64, n_hidden=n_hidden, n_visible=n_visible, activation=exp)
 
@@ -55,7 +54,7 @@ function test_gs_energy()
 
 	losses = Float64[]
 
-    λt(n) = 1.0e-3 * 10.0^(-n / 100) + 1.0e-6
+    λt(n) = 2 * (1.0e-3 * 10.0^(-n / 100) + 1.0e-6)
     for i in 1:epoches
         λ = λt(i)
         println("regularization at the $i-th step is $λ")
@@ -63,6 +62,7 @@ function test_gs_energy()
         # @time train_loss, grad = parallel_energy_and_grad(ham, sampler, rbm, n_chain=n_chain, λ=1.0e-5)
 
 
+        # x0 -= learn_rate * grad
         Optimise.update!(opt, x0, grad)
         reset!(paras, x0)
 

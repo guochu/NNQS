@@ -12,16 +12,17 @@ using Zygote, Flux
 using Zygote: Params, Grads
 
 
-# auxiliary functions
-export parameters, reset!
+# # auxiliary functions
+# export parameters, reset!
 
 # neural network states
 export AbstractNNQS, Ψ, FCN, RBM
+export MPS, rightorth!, rightorth, isrightcanonical
 
 # sampler
 export BitFlip, BondSwap, FermiBondSwap, move!
 export AbstractSampler, MetropolisLocal, Metropolis, thermalize!, update!, init_state, generate_samples
-
+export AutoRegressiveSampler, autoregressivesampling
 
 # hamiltonian
 export Hamiltonian, coupled_states, diagonal_coupling
@@ -44,13 +45,13 @@ include("auxiliary/params.jl")
 # neural network states
 include("nnqs/defs.jl")
 include("nnqs/rbm.jl")
-
+include("nnqs/mps.jl")
 
 # sampler
 include("sampler/defs.jl")
 include("sampler/mover.jl")
 include("sampler/Metropolis.jl")
-
+include("sampler/autoregressive.jl")
 
 # hamiltonian 
 include("hamiltonian/defs.jl")
