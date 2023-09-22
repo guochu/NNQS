@@ -40,9 +40,9 @@ sys_size(m::FCN) = m.n_visible
 Base.copy(m::FCN) = FCN(copy(m.dn), copy(m.a), m.activation)
 
 
-Ψ(m::FCN, x::ComputationBasis) = m.activation(transpose(m.a) * x) * exp(sum(m.dn(x) ))
+_Ψ(m::FCN, x::ComputationBasis) = m.activation(transpose(m.a) * x) * exp(sum(m.dn(x) ))
 # the output is a 1×batch_size array
-Ψ(m::FCN, x::BatchComputationBasis) = (m.activation).(transpose(m.a) * x) .* exp.(sum( m.dn(x), dims=1))
+_Ψ(m::FCN, x::BatchComputationBasis) = (m.activation).(transpose(m.a) * x) .* exp.(sum( m.dn(x), dims=1))
 
 
 

@@ -27,7 +27,7 @@ MPS(::Type{T}, L::Int; D::Int, d::Int=2) where {T <: Number} = MPS(T, [d for i i
 MPS(L::Int; D::Int, d::Int=2) = MPS(Float64, L; d=d, D=D)
 
 
-function _Ψ(m::MPS, x::ComputationBasis)
+function _Ψ_util(m::MPS, x::ComputationBasis)
 	@assert length(m) == length(x)
 	v = m.data[1][:, x[1], :]	
 	for i in 2:length(x)
@@ -35,8 +35,7 @@ function _Ψ(m::MPS, x::ComputationBasis)
 	end
 	return only(v)
 end
-Ψ(m::MPS, x::ComputationBasis) = _Ψ(m, dropgrad(_state_to_index(x)))
-Ψ(m::MPS, x::BatchComputationBasis) = transpose([Ψ(m, view(x, :, j)) for j in 1:size(x, 2)])
+_Ψ(m::MPS, x::ComputationBasis) = _Ψ_util(m, dropgrad(_state_to_index(x)))
 
 sys_size(x::MPS) = length(x)
 Base.copy(x::MPS) = MPS(copy(x.data))

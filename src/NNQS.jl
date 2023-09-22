@@ -23,7 +23,10 @@ export MPS, rightorth!, rightorth, isrightcanonical, increase_bond!
 export BitFlip, BondSwap, FermiBondSwap, move!
 export AbstractSampler, MetropolisLocal, Metropolis, thermalize!, update!, init_state, generate_samples
 export AutoRegressiveSampler, autoregressivesampling
-export AbstractConstrain, NoConstrain
+# constrains for batchautoregressivesampling
+export AbstractConstrain, satisfied
+export NoConservation, NodeConservationConstrain, RootConservationConstrain, LeafConservationConstrain
+export U1LeafConservation, U1NodeConservation, U1U1LeafConservation, U1U1NodeConservation
 export BatchAutoRegressiveSampler
 
 # hamiltonian

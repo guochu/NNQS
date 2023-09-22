@@ -6,10 +6,13 @@ const ComputationBasis = AbstractVector{Int}
 const BatchComputationBasis = AbstractMatrix{Int}
 const GeneralBasis = AbstractVecOrMat{Int}
 
+Ψ(nnqs::AbstractNNQS, state::GeneralBasis) = _Ψ(nnqs, dropgrad(state))
+
+
 # interfaces that should be implemented by a customized NNQS model
 
 """
-	Ψ(nnqs::AbstractNNQS, state)
+	_Ψ(nnqs::AbstractNNQS, state)
 	if state is a specific computational basis, return the amplitude of it
 	if state is a batch of computational basis, return the amplitudes of them as a vector. 
 	The batched version should be explicitly implemented for better efficiency.
@@ -26,8 +29,8 @@ const GeneralBasis = AbstractVecOrMat{Int}
 	In the future I may consider use a machine learning framework such as Flux as the backend, then one would 
 	be able to use the parameters deduction mechanism of Flux and 3,4,5) will no longer be required.
 """
-Ψ(nnqs::AbstractNNQS, state::GeneralBasis) = error("Ψ not defined for NNQS type $(typeof(nnqs)).")
-
+_Ψ(nnqs::AbstractNNQS, state::ComputationBasis) = error("_Ψ not defined for NNQS type $(typeof(nnqs)).")
+_Ψ(nnqs::AbstractNNQS, state::BatchComputationBasis) = transpose([_Ψ(nnqs, view(state, :, j)) for j in 1:size(state, 2)])
 
 # used for exact sampler
 sys_size(nnqs::AbstractNNQS) = error("sys_size not implemented for NNQS type $(typeof(nnqs)).")

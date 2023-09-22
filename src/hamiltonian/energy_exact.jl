@@ -23,10 +23,12 @@ function matrix(h::Hamiltonian, L::Int)
 		pos_i = linear_indices[index]
 		m[pos_i, pos_i] = E_diag
 		c_states, coefs = coupled_states(h, state)
-		for n in 1:size(c_states, 2)
-			index_j = state_to_index(c_states[:, n])
-			pos_j = linear_indices[index_j]
-			m[pos_j, pos_i] = coefs[n]
+		if !isempty(coefs)
+			for n in 1:size(c_states, 2)
+				index_j = state_to_index(c_states[:, n])
+				pos_j = linear_indices[index_j]
+				m[pos_j, pos_i] = coefs[n]
+			end
 		end
 	end
 	return m
