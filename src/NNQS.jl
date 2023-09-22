@@ -7,7 +7,7 @@ module NNQS
 # 4) The variational Monte Carlo algorithm, the essense of which is to evaluate the gradients.
 # 5) The Hamiltonian representation which allows to efficiently derive coupled states given an computational basis
 
-using Random, LinearAlgebra, Statistics
+using Random, LinearAlgebra, Statistics, Distributions
 using Zygote, Flux
 using Zygote: Params, Grads
 
@@ -23,6 +23,8 @@ export MPS, rightorth!, rightorth, isrightcanonical, increase_bond!
 export BitFlip, BondSwap, FermiBondSwap, move!
 export AbstractSampler, MetropolisLocal, Metropolis, thermalize!, update!, init_state, generate_samples
 export AutoRegressiveSampler, autoregressivesampling
+export AbstractConstrain, NoConstrain
+export BatchAutoRegressiveSampler
 
 # hamiltonian
 export Hamiltonian, coupled_states, diagonal_coupling
@@ -51,16 +53,12 @@ include("nnqs/mps.jl")
 include("sampler/defs.jl")
 include("sampler/mover.jl")
 include("sampler/Metropolis.jl")
+include("sampler/constrains.jl")
 include("sampler/autoregressive.jl")
+include("sampler/batchautoregressive.jl")
 
 # hamiltonian 
-include("hamiltonian/defs.jl")
-
-include("hamiltonian/energy_util.jl")
-include("hamiltonian/energy.jl")
-# the exact calculations are used for debug
-include("hamiltonian/energy_exact.jl")
-
+include("hamiltonian/hamiltonian.jl")
 
 # utility
 include("utility/spin_hamiltonians.jl")

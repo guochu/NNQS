@@ -27,7 +27,7 @@ MPS(::Type{T}, L::Int; D::Int, d::Int=2) where {T <: Number} = MPS(T, [d for i i
 MPS(L::Int; D::Int, d::Int=2) = MPS(Float64, L; d=d, D=D)
 
 
-function Ψ′(m::MPS, x::ComputationBasis)
+function _Ψ(m::MPS, x::ComputationBasis)
 	@assert length(m) == length(x)
 	v = m.data[1][:, x[1], :]	
 	for i in 2:length(x)
@@ -35,14 +35,14 @@ function Ψ′(m::MPS, x::ComputationBasis)
 	end
 	return only(v)
 end
-Ψ(m::MPS, x::ComputationBasis) = Ψ′(m, state_to_index(x))
+Ψ(m::MPS, x::ComputationBasis) = _Ψ(m, dropgrad(_state_to_index(x)))
 Ψ(m::MPS, x::BatchComputationBasis) = transpose([Ψ(m, view(x, :, j)) for j in 1:size(x, 2)])
 
 sys_size(x::MPS) = length(x)
 Base.copy(x::MPS) = MPS(copy(x.data))
 
-state_to_index(x::ComputationBasis) = [(item == -1) ? 2 : 1 for item in x]
-Zygote.@adjoint state_to_index(x::ComputationBasis) = state_to_index(x), z -> (nothing,)
+_state_to_index(x::ComputationBasis) = [(item == -1) ? 2 : 1 for item in x]
+# Zygote.@adjoint state_to_index(x::ComputationBasis) = state_to_index(x), z -> (nothing,)
 
 function max_bond_dimensions(physpaces::Vector{Int}, D::Int) 
 	L = length(physpaces)
@@ -88,6 +88,28 @@ isrightcanonical(a::MPS; kwargs...) = all(x->isrightcanonical(x; kwargs...), a.d
 function isrightcanonical(psij::AbstractArray{<:Number, 3}; kwargs...)
 	m2 = tie(psij, (1,2))
 	r = m2 * m2'
+	return isapprox(r, one(r); kwargs...) 
+end
+
+# prepare MPS in left-canonical form
+function leftorth!(psi0::MPS; normalize::Bool=true)
+	psi = psi0.data
+	L = length(psi)
+	workspace = eltype(psi0)[]
+	for i in 1:L-1
+		q, r = tqr!(psi[i], (1, 2), (3,), workspace)
+		normalize && LinearAlgebra.normalize!(r)
+		psi[i] = q
+		psi[i+1] = reshape(r * tie(psi[i+1], (1, 2)), size(r, 1), size(psi[i+1], 2), size(psi[i+1], 3))
+	end
+	normalize && LinearAlgebra.normalize!(psi[L])
+	return psi0
+end
+leftorth(psi::MPS; kwargs...) = leftorth!(copy(psi); kwargs...)
+isleftcanonical(a::MPS; kwargs...) = all(x->isleftcanonical(x; kwargs...), a.data)
+function isleftcanonical(psij::AbstractArray{<:Number, 3}; kwargs...)
+	m2 = tie(psij, (2, 1))
+	r = m2' * m2
 	return isapprox(r, one(r); kwargs...) 
 end
 

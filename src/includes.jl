@@ -1,5 +1,5 @@
 
-using Random, LinearAlgebra, Statistics
+using Random, LinearAlgebra, Statistics, Distributions
 using Zygote, Flux
 using Zygote: Params, Grads
 
@@ -22,15 +22,12 @@ include("nnqs/mps.jl")
 include("sampler/defs.jl")
 include("sampler/mover.jl")
 include("sampler/Metropolis.jl")
+include("sampler/constrains.jl")
 include("sampler/autoregressive.jl")
+include("sampler/batchautoregressive.jl")
 
 # hamiltonian 
-include("hamiltonian/defs.jl")
-
-include("hamiltonian/energy_util.jl")
-include("hamiltonian/energy.jl")
-# the exact calculations are used for debug
-include("hamiltonian/energy_exact.jl")
+include("hamiltonian/hamiltonian.jl")
 
 
 # utility

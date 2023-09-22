@@ -40,7 +40,7 @@ function generate_samples(h::Hamiltonian, m::Metropolis, nnqs::AbstractNNQS)
 	for i in 1:m.n_sample_per_chain
 		samples[:, i] = update!(m, nnqs, state, work_state)
 	end
-	return samples
+	return unique_counts(samples)
 end
 function generate_samples(h::Hamiltonian, m::AutoRegressiveSampler, nnqs::MPS)
 	@assert m.N == sys_size(nnqs)
@@ -49,6 +49,46 @@ function generate_samples(h::Hamiltonian, m::AutoRegressiveSampler, nnqs::MPS)
 	for i in 1:m.n_sample_per_chain
 		samples[:, i] = autoregressivesampling(nnqs2)
 	end	
-	return samples
+	return unique_counts(samples)
+end
+function generate_samples(h::Hamiltonian, m::BatchAutoRegressiveSampler, nnqs::MPS)
+	@assert m.N == sys_size(nnqs)
+	nnqs2 = rightorth(nnqs, normalize=true)
+	return batchautoregressivesampling(nnqs2, m.n_sample_per_chain, m.constrain)
+end
+
+function _count_map(samples::BatchComputationBasis)
+	@assert !isempty(samples)
+	sample_conuts = Dict{Vector{Int}, Int}()
+	for i in 1:size(samples, 2)
+		sample = samples[:, i]
+		c = get(sample_conuts, sample, 0)
+		sample_conuts[sample] = c + 1
+	end
+	return sample_conuts
+end
+function _count_map(samples::AbstractVector{<:ComputationBasis})
+	@assert !isempty(samples)
+	sample_conuts = Dict{Vector{Int}, Int}()
+	for sample in samples
+		c = get(sample_conuts, sample, 0)
+		sample_conuts[sample] = c + 1
+	end
+	return sample_conuts
+end
+
+function unique_counts(samples)
+	sample_conuts = _count_map(samples)
+	L = length(sample_conuts)
+	N = size(samples, 1)
+	unique_samples = zeros(Int, N, L)
+	counts = zeros(Int, L)
+	i = 1
+	for (k, v) in sample_conuts
+		unique_samples[:, i] = k
+		counts[i] = v
+		i += 1
+	end
+	return unique_samples, counts
 end
 

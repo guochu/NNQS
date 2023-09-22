@@ -77,43 +77,52 @@ function energy_and_grad_exact(h::Hamiltonian, nnqs::AbstractNNQS; λ::Real = 1.
 	return E_loc, _regularization!(2 .* (E∂θ .- real(E_loc) .* ∂θ), Flux.destructure(nnqs)[1], λ)
 end
 
-function energy_and_grad_sr_exact(h::Hamiltonian, nnqs::AbstractNNQS; diag_shift::Real=1.0e-4, λ::Real = 1.0e-6)
-	L = sys_size(nnqs)
-	E_loc, ∂θ = local_energy_and_grad(h, nnqs, ones(Int, L))
-
-	E_loc = zero(E_loc)
-	∂θ = zero(∂θ)
-	E∂θ = zero(∂θ)
-	∂θ∂θ = zeros(eltype(∂θ), length(∂θ), length(∂θ))
-
-	indices = CartesianIndices(ntuple(x->2, L))
-	p_all = 0.
-	for index in indices
-		state = index_to_state(index)
-		E_loc_batch, ∂θ_batch = local_energy_and_grad(h, nnqs, state)
-		amp = Ψ(nnqs, state)
-		p_single = abs2(amp)
-		E_loc += E_loc_batch * p_single
-		∂θ .+= ∂θ_batch * p_single
-		E∂θ .+= (E_loc_batch * p_single) .* ∂θ_batch
-		∂θ∂θ .+= reshape(kron(conj(∂θ_batch), ∂θ_batch), length(∂θ), length(∂θ)) * p_single
-		# push!(energies, E_loc_batch)
-		p_all += p_single
-	end
-	E_loc /= p_all
-	∂θ ./= p_all
-	E∂θ ./= p_all
-	∂θ∂θ ./= p_all
-	grad = 2 .* (E∂θ .- real(E_loc) .* ∂θ)
-	S = ∂θ∂θ - reshape(kron(conj(∂θ), ∂θ), length(∂θ), length(∂θ))
-	# println("average sign is $(average_sign(energies))")
-
- 	# # regularization
- 	# S .+= reg .* Diagonal(S)
- 	# # grad_sr = S \ grad
- 	# grad_sr = pinv(S) * grad
- 	# return E_loc, grad_sr
-
- 	# return E_loc, stable_solve(S, grad, diag_shift=diag_shift)
-	return E_loc, _regularization!(stable_solve(S, grad, diag_shift=diag_shift), Flux.destructure(nnqs)[1], λ)
+function local_energy_and_grad(h::Hamiltonian, nnqs::AbstractNNQS, state::ComputationBasis)
+	# amp_state, back = Zygote.pullback( () -> Ψ(nnqs, state), Flux.params(nnqs) )
+	amp_state, back = Zygote.pullback( m -> Ψ(m, state), nnqs )
+	_energy = local_energy_single(h, nnqs, state, amp_state)
+	grad, re = Flux.destructure(back(one(_energy)))
+	grad ./= conj(amp_state)
+	return _energy, grad
 end
+
+# function energy_and_grad_sr_exact(h::Hamiltonian, nnqs::AbstractNNQS; diag_shift::Real=1.0e-4, λ::Real = 1.0e-6)
+# 	L = sys_size(nnqs)
+# 	E_loc, ∂θ = local_energy_and_grad(h, nnqs, ones(Int, L))
+
+# 	E_loc = zero(E_loc)
+# 	∂θ = zero(∂θ)
+# 	E∂θ = zero(∂θ)
+# 	∂θ∂θ = zeros(eltype(∂θ), length(∂θ), length(∂θ))
+
+# 	indices = CartesianIndices(ntuple(x->2, L))
+# 	p_all = 0.
+# 	for index in indices
+# 		state = index_to_state(index)
+# 		E_loc_batch, ∂θ_batch = local_energy_and_grad(h, nnqs, state)
+# 		amp = Ψ(nnqs, state)
+# 		p_single = abs2(amp)
+# 		E_loc += E_loc_batch * p_single
+# 		∂θ .+= ∂θ_batch * p_single
+# 		E∂θ .+= (E_loc_batch * p_single) .* ∂θ_batch
+# 		∂θ∂θ .+= reshape(kron(conj(∂θ_batch), ∂θ_batch), length(∂θ), length(∂θ)) * p_single
+# 		# push!(energies, E_loc_batch)
+# 		p_all += p_single
+# 	end
+# 	E_loc /= p_all
+# 	∂θ ./= p_all
+# 	E∂θ ./= p_all
+# 	∂θ∂θ ./= p_all
+# 	grad = 2 .* (E∂θ .- real(E_loc) .* ∂θ)
+# 	S = ∂θ∂θ - reshape(kron(conj(∂θ), ∂θ), length(∂θ), length(∂θ))
+# 	# println("average sign is $(average_sign(energies))")
+
+#  	# # regularization
+#  	# S .+= reg .* Diagonal(S)
+#  	# # grad_sr = S \ grad
+#  	# grad_sr = pinv(S) * grad
+#  	# return E_loc, grad_sr
+
+#  	# return E_loc, stable_solve(S, grad, diag_shift=diag_shift)
+# 	return E_loc, _regularization!(stable_solve(S, grad, diag_shift=diag_shift), Flux.destructure(nnqs)[1], λ)
+# end
