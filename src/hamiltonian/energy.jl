@@ -76,19 +76,19 @@ Zygote.@adjoint energy(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSamp
 end
 
 
-function energy_grad_loss(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler)
-	mean_energy, loss = energy_and_grad_loss(h, nnqs, sampler)
-	return loss
-end
+# function energy_grad_loss(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler)
+# 	mean_energy, loss = energy_and_grad_loss(h, nnqs, sampler)
+# 	return loss
+# end
 
-function energy_and_grad_loss(h::Hamiltonian, nnqs::AbstractNNQS, samples::BatchComputationBasis, weights::Vector{<:Real})
-	amps = Ψ(nnqs, samples)
-	_energies = local_energies(h, nnqs, samples, amps)
-	mean_energy = dot(weights, _energies)
-	_energies .-= mean_energy
-	weighted_energies = weights .* _energies
-	return mean_energy, _energy_util(amps, weighted_energies)
-end
+# function energy_and_grad_loss(h::Hamiltonian, nnqs::AbstractNNQS, samples::BatchComputationBasis, weights::Vector{<:Real})
+# 	amps = Ψ(nnqs, samples)
+# 	_energies = local_energies(h, nnqs, samples, amps)
+# 	mean_energy = dot(weights, _energies)
+# 	_energies .-= mean_energy
+# 	weighted_energies = weights .* _energies
+# 	return mean_energy, _energy_util(amps, weighted_energies)
+# end
 
 
 function log_amplitudes(amps)
