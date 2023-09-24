@@ -2,10 +2,10 @@
 	energy_and_grad(h, nnqs, sampler; kwargs...)
 	Add a nonzero regularization to the loss for nonzero λ
 	"""
-function energy_and_grad(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler; n_chains::Int=10, 
+function energy_and_grad(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler; n_chain::Int=10, 
 	seeds::Union{Vector{Int}, Nothing}=nothing, λ::Real = 1.0e-6, verbosity::Int=1)
 	# samples = generate_samples(sampler, nnqs)
-	energies_and_grads = energy_and_grad_per_rank(h, nnqs, sampler, n_chains=n_chains, seeds=seeds)
+	energies_and_grads = energy_and_grad_per_rank(h, nnqs, sampler, n_chain=n_chain, seeds=seeds)
 	energy, grad = energies_and_grads[1]
 	energies = zeros(typeof(energy), length(energies_and_grads))
 	energies[1] = energy
@@ -24,7 +24,7 @@ function energy_and_grad(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSa
 	return E_loc, _regularization!(grad, Flux.destructure(nnqs)[1], λ)
 end
 
-function energy_and_grad_per_rank(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler; n_chains::Int=10, 
+function energy_and_grad_per_rank(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler; n_chain::Int=10, 
 	seeds::Union{Vector{Int}, Nothing}=nothing)
 
 	function f_per_chain(_seed)
@@ -34,9 +34,9 @@ function energy_and_grad_per_rank(h::Hamiltonian, nnqs::AbstractNNQS, sampler::A
 		return _energy, grad
 	end
 	if isnothing(seeds)
-		seeds = rand(1000:100000, n_chains)
+		seeds = rand(1000:100000, n_chain)
 	else
-		@assert length(seeds) == n_chains
+		@assert length(seeds) == n_chain
 	end
 	
 	return f_per_chain.(seeds)
