@@ -45,10 +45,10 @@ end
 
 
 function check_grad()
-	L = 10
+	L = 3
 	J = 1.
 	hz = 0.7
-	nqs = MPS(L, D=2)
+	nqs = MPS(ComplexF64, L, D=2)
 	h = IsingChain(h=hz, J=J)
 	_energy, grad = energy_and_grad_exact(h, nqs)
 	println("nnqs exact energy and grad is ", _energy, " ", norm(grad))

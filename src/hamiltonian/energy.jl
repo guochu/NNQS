@@ -53,7 +53,7 @@ function energy(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler)
 	amps = Ψ(nnqs, unique_samples)
 	_energies = local_energies(h, nnqs, unique_samples, amps)
 	weights = counts ./ sum(counts)
-	return dot(weights, _energies)
+	return real(dot(weights, _energies))
 end
 
 Zygote.@adjoint energy(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler) = begin
@@ -63,7 +63,7 @@ Zygote.@adjoint energy(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSamp
 	weights = counts ./ sum(counts)
 	mean_energy = dot(weights, _energies)
 	_energies .-= mean_energy
-	return mean_energy, z -> begin
+	return real(mean_energy), z -> begin
 		weighted_energies = weights .* _energies
 		_loss, _loss_back = Zygote.pullback(_energy_util, amps, weighted_energies)
 		_loss_grad, _n = _loss_back(2*one(_loss))
@@ -98,7 +98,7 @@ function log_amplitudes(amps)
 	end
 end
 
-_energy_util(amps, weighted_energies) = only(log_amplitudes(amps) * dropgrad(weighted_energies))
+_energy_util(amps, weighted_energies) = dot(log_amplitudes(amps), dropgrad(weighted_energies))
 
 
 

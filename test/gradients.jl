@@ -70,7 +70,7 @@ end
 @testset "Checking batchautoregressive energy and gradient" begin
 	tol = 1.0e-3
 
-	for T in (Float64, )
+	for T in (Float64, ComplexF64)
 		for L in (4, 5)
 			sampler = BatchAutoRegressiveSampler(L, n_sample_per_chain=10^10)
 			for h in (1, -1)
