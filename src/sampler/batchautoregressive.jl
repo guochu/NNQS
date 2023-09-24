@@ -9,6 +9,8 @@ end
 BatchAutoRegressiveSampler(constrain::AbstractConstrain, N::Int; n_sample_per_chain::Int=500) = BatchAutoRegressiveSampler(constrain, N, n_sample_per_chain)
 BatchAutoRegressiveSampler(N::Int; constrain::AbstractConstrain=NoConservation(), kwargs...) = BatchAutoRegressiveSampler(constrain, N; kwargs...)
 
+batchautoregressivesampling(nnqs::AbstractNNQS, n::Int, constrain::AbstractConstrain) = error("batchautoregressivesampling not implemented for nqs type $(typeof(nnqs))")
+
 function batchautoregressivesampling(nnqs::MPS, n::Int, constrain::NoConservation)
 	@assert length(nnqs) > 0
 	@assert isrightcanonical(nnqs)

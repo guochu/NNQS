@@ -6,6 +6,7 @@ struct AutoRegressiveSampler <: AbstractSampler
 end
 AutoRegressiveSampler(N::Int; n_sample_per_chain::Int=500) = AutoRegressiveSampler(N, n_sample_per_chain)
 
+autoregressivesampling(nnqs::AbstractNNQS) = error("autoregressivesampling not implemented for nqs type $(typeof(nnqs))")
 
 function autoregressivesampling(nnqs::MPS)
 	@assert length(nnqs) > 0

@@ -73,13 +73,13 @@ MetropolisLocal(N::Int; kwargs...) = Metropolis(N; mover=BitFlip(), kwargs...)
 function thermalize!(m::Metropolis, nnqs::AbstractNNQS, state::ComputationBasis, work_state::ComputationBasis)
 	# init!(m)
 	for i in 1:m.n_thermal
-		single_update!(m, nnqs, state, work_state)
+		_single_update!(m, nnqs, state, work_state)
 	end
 	return state
 end
 
 
-function single_update!(m::Metropolis, nnqs::AbstractNNQS, state::ComputationBasis, work_state::ComputationBasis)
+function _single_update!(m::Metropolis, nnqs::AbstractNNQS, state::ComputationBasis, work_state::ComputationBasis)
 	copyto!(work_state, state)
 	move!(work_state, m.mover)
 	p = abs2(Ψ(nnqs, work_state) / Ψ(nnqs, state))
@@ -89,9 +89,9 @@ function single_update!(m::Metropolis, nnqs::AbstractNNQS, state::ComputationBas
 	return state
 end
 
-function update!(sampler::Metropolis, nnqs::AbstractNNQS, state::ComputationBasis, work_state::ComputationBasis)
+function _update!(sampler::Metropolis, nnqs::AbstractNNQS, state::ComputationBasis, work_state::ComputationBasis)
 	for n in 1:sampler.n_discard
-		single_update!(sampler, nnqs, state, work_state)
+		_single_update!(sampler, nnqs, state, work_state)
 	end	
 	return state
 end

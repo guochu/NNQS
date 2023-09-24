@@ -38,7 +38,7 @@ function generate_samples(h::Hamiltonian, m::Metropolis, nnqs::AbstractNNQS)
 	thermalize!(m, nnqs, state, work_state)
 	samples = zeros(Int, m.N, m.n_sample_per_chain)
 	for i in 1:m.n_sample_per_chain
-		samples[:, i] = update!(m, nnqs, state, work_state)
+		samples[:, i] = _update!(m, nnqs, state, work_state)
 	end
 	return unique_counts(samples)
 end
@@ -56,6 +56,7 @@ function generate_samples(h::Hamiltonian, m::BatchAutoRegressiveSampler, nnqs::M
 	nnqs2 = rightorth(nnqs, normalize=true)
 	return batchautoregressivesampling(nnqs2, m.n_sample_per_chain, m.constrain)
 end
+sampling(h::Hamiltonian, nnqs::AbstractNNQS, m::AbstractSampler) = generate_samples(h, m, nnqs)
 
 function _count_map(samples::BatchComputationBasis)
 	@assert !isempty(samples)
