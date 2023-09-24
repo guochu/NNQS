@@ -31,10 +31,9 @@ export BatchAutoRegressiveSampler
 
 # hamiltonian
 export Hamiltonian, coupled_states, diagonal_coupling
-export EnergiesGrads, BlockEnergiesGrads, aggregate
-export energy, energy_and_grad, energy_and_grad_sr
+export energy, energy_and_grad, sampling
 # the exact versions are used for debug
-export energy_exact, energy_and_grad_exact, energy_and_grad_sr_exact
+export energy_exact, energy_and_grad_exact
 
 
 # auxiliary

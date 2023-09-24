@@ -4,7 +4,6 @@
 	"""
 function energy_and_grad(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler; n_chain::Int=10, 
 	seeds::Union{Vector{Int}, Nothing}=nothing, λ::Real = 1.0e-6, verbosity::Int=1)
-	# samples = generate_samples(sampler, nnqs)
 	energies_and_grads = energy_and_grad_per_rank(h, nnqs, sampler, n_chain=n_chain, seeds=seeds)
 	energy, grad = energies_and_grads[1]
 	energies = zeros(typeof(energy), length(energies_and_grads))
@@ -50,7 +49,7 @@ function energy_and_grad_per_chain(h::Hamiltonian, nnqs::AbstractNNQS, sampler::
 end
 
 function energy(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler)
-	unique_samples, counts = generate_samples(h, sampler, nnqs)
+	unique_samples, counts = sampling(h, nnqs, sampler)
 	amps = Ψ(nnqs, unique_samples)
 	_energies = local_energies(h, nnqs, unique_samples, amps)
 	weights = counts ./ sum(counts)
@@ -58,7 +57,7 @@ function energy(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler)
 end
 
 Zygote.@adjoint energy(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler) = begin
-	unique_samples, counts = generate_samples(h, sampler, nnqs)
+	unique_samples, counts = sampling(h, nnqs, sampler)
 	amps, amps_back = Zygote.pullback(Ψ, nnqs, unique_samples)
 	_energies = local_energies(h, nnqs, unique_samples, amps)
 	weights = counts ./ sum(counts)
