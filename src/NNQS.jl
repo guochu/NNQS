@@ -32,6 +32,8 @@ export energy, energy_and_grad, sampling
 # the exact versions are used for debug
 export energy_exact, energy_and_grad_exact
 
+# utilities
+export IsingChain, HeisenbergChain
 
 using Random, LinearAlgebra, Statistics, Distributions
 using Zygote, Flux
@@ -43,7 +45,7 @@ using Zygote: Params, Grads
 # NN module rewrites layers since Flux only support Float32 currently, while we need Float64 and ComplexF64
 include("auxiliary/nn/basic.jl")
 
-using NNQS.NN
+using .NN
 
 # params.jl provides functions to convert Params object from and to a flat vector of parameters, this is
 # necessary when we want to do stochastic reconfiguration

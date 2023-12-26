@@ -1,5 +1,5 @@
 
-include("defs.jl")
+include("interface.jl")
 include("util.jl")
 include("energy.jl")
 include("energy_sr.jl")

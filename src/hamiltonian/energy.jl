@@ -87,22 +87,3 @@ end
 _energy_util(amps, weighted_energies) = dot(log_amplitudes(amps), dropgrad(weighted_energies))
 
 
-
-"""
-	local_energy_single(h::Hamiltonian, nnqs::AbstractNNQS, state::ComputationBasis)
-	return E_local
-"""
-function local_energy_single(h::Hamiltonian, nnqs::AbstractNNQS, state::ComputationBasis, amp_state::Number=Ψ(nnqs, state))
-	E_loc = diagonal_coupling(h, state)
-	c_states, coefs = coupled_states(h, state)
-	if !isempty(coefs)
-		E_loc += only((Ψ(nnqs, c_states) ./ amp_state) * coefs)
-	end
-	return E_loc
-end
-
-function local_energies(h::Hamiltonian, nnqs::AbstractNNQS, state::BatchComputationBasis, amps=Ψ(nnqs, state))
-	@assert size(state, 2) == length(amps)
-	return [local_energy_single(h, nnqs, view(state, :, j), amps[j]) for j in 1:length(amps)]
-end
-

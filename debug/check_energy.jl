@@ -4,6 +4,7 @@ include("../src/includes.jl")
 # using NNQS
 
 using QuantumSpins
+using Random
 
 function ising_chain2(L::Int; J::Real, hz::Real)
 	p = spin_half_matrices()
@@ -45,6 +46,7 @@ end
 
 
 function check_grad()
+	# Random.seed!(1245)
 	L = 3
 	J = 1.
 	hz = 0.7
@@ -77,3 +79,37 @@ function check_grad()
 end
 
 
+function check_grad_sr()
+	# Random.seed!(1245)
+	L = 3
+	J = 1.
+	hz = 0.7
+	nqs = MPS(ComplexF64, L, D=2)
+	h = IsingChain(h=hz, J=J)
+	_energy, grad = energy_and_grad_sr_exact(h, nqs)
+	println("nnqs exact energy and grad is ", _energy, " ", norm(grad))
+	# println(grad)
+
+	n_sample_per_chain = 10000000000000
+
+	# sampler = AutoRegressiveSampler(L, n_sample_per_chain=n_sample_per_chain)	
+	# _energy, back = Zygote.pullback(energy, h, nqs, sampler)
+	# _a, _grad, _b = back(one(_energy))
+	# grad1, re = Flux.destructure(_grad)
+	# println("nnqs autoregressive energy is ", _energy, " ", norm(grad-grad1) / norm(grad))
+
+	sampler = BatchAutoRegressiveSampler(L, n_sample_per_chain=n_sample_per_chain)	
+	# _energy, back = Zygote.pullback(energy, h, nqs, sampler)
+	# _a, _grad, _b = back(one(_energy))
+	# grad2, re = Flux.destructure(_grad)
+	_energy, grad2 = energy_and_grad_sr(h, nqs, sampler, n_chain=10)
+	println("nnqs batchautoregressive energy is ", _energy, " ", norm(grad2), " ", norm(grad-grad2) / norm(grad) )
+	# println(grad2)
+
+	# sampler = MetropolisLocal(L, n_thermal=10000, n_sample_per_chain=n_sample_per_chain, n_discard=100)	
+	# _energy, back = Zygote.pullback(energy, h, nqs, sampler)
+	# _a, _grad, _b = back(one(_energy))
+	# grad3, re = Flux.destructure(_grad)
+	# println("nnqs MCMC energy is ", _energy, " ",  norm(grad-grad3) / norm(grad) )
+
+end
