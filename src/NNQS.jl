@@ -7,11 +7,6 @@ module NNQS
 # 4) The variational Monte Carlo algorithm, the essense of which is to evaluate the gradients.
 # 5) The Hamiltonian representation which allows to efficiently derive coupled states given an computational basis
 
-using Random, LinearAlgebra, Statistics, Distributions
-using Zygote, Flux
-using Zygote: Params, Grads
-
-
 # # auxiliary functions
 # export parameters, reset!
 
@@ -21,19 +16,27 @@ export MPS, rightorth!, rightorth, isrightcanonical, increase_bond!
 
 # sampler
 export BitFlip, BondSwap, FermiBondSwap, move!
+# Metropolis-Hasting sampling
 export AbstractSampler, MetropolisLocal, Metropolis, thermalize!, update!, init_state, generate_samples
+# auto-regressive sampling
 export AutoRegressiveSampler, autoregressivesampling
-# constrains for batchautoregressivesampling
+# batchautoregressivesampling with various constrains
+export BatchAutoRegressiveSampler
 export AbstractConstrain, satisfied
 export NoConservation, NodeConservationConstrain, RootConservationConstrain, LeafConservationConstrain
 export U1LeafConservation, U1NodeConservation, U1U1LeafConservation, U1U1NodeConservation
-export BatchAutoRegressiveSampler
 
 # hamiltonian
 export Hamiltonian, coupled_states, diagonal_coupling
 export energy, energy_and_grad, sampling
 # the exact versions are used for debug
 export energy_exact, energy_and_grad_exact
+
+
+using Random, LinearAlgebra, Statistics, Distributions
+using Zygote, Flux
+using Zygote: Params, Grads
+
 
 
 # auxiliary

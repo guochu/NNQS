@@ -1,7 +1,10 @@
 
+
 using Random, LinearAlgebra, Statistics, Distributions
 using Zygote, Flux
 using Zygote: Params, Grads
+
+
 
 # auxiliary
 # NN module rewrites layers since Flux only support Float32 currently, while we need Float64 and ComplexF64
@@ -28,7 +31,6 @@ include("sampler/batchautoregressive.jl")
 
 # hamiltonian 
 include("hamiltonian/hamiltonian.jl")
-
 
 # utility
 include("utility/spin_hamiltonians.jl")

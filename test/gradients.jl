@@ -54,7 +54,7 @@ println("------------------------------------")
 
 				for nqs in models
 					x0, re = Flux.destructure(nqs)
-					ham = NNQS.IsingChain(h=h, J=J)
+					ham = IsingChain(h=h, J=J)
 					loss_origin(nn) = real(energy_exact(ham, nn))
 					loss(p) = loss_origin(re(p))
 					E, grad1 = energy_and_grad_exact(ham, nqs)
@@ -77,7 +77,7 @@ end
 				J = 1
 				n_visible = L
 				nqs = MPS(T, n_visible, D=5)
-				ham = NNQS.IsingChain(h=h, J=J)
+				ham = IsingChain(h=h, J=J)
 				
 				E1, grad1 = energy_and_grad_exact(ham, nqs)
 				E2, grad2 = energy_and_grad(ham, nqs, sampler, verbosity=0)

@@ -1,26 +1,3 @@
-
-
-# """
-# 	ising_chain_coupled_states(state::ComputationBasis; h::Real, J::Real)
-# 	Ising Chain Hamiltonian $H = J\sum_{j=1}^{L-1} \sigma^z_j\sigma^z_{j+1} + h\sum_{j=1}^L \sigma^x_j$		
-# """
-# function ising_chain_couplings(state::ComputationBasis; h::Real, J::Real)
-# 	L = length(state)
-# 	h = convert(Float64, h)
-# 	J = convert(Float64, J)
-# 	E_diag = 0.
-# 	for j in 1:L-1
-# 		E_diag += J * state[j] * state[j+1]
-# 	end
-# 	c_states = Tuple{ComputationBasis, Float64}[]
-# 	for j in 1:L
-# 		new_state = copy(state)
-# 		new_state[j] = -state[j]
-# 		push!(c_states, (new_state, h))
-# 	end
-# 	return E_diag, c_states
-# end
-
 struct IsingChain <: Hamiltonian
 	h::Float64
 	J::Float64
@@ -98,10 +75,5 @@ function diagonal_coupling(h::HeisenbergChain, state::ComputationBasis)
 	end
 	return E_diag
 end
-
-
-
-
-
 
 
