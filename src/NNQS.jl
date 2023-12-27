@@ -22,9 +22,9 @@ export AbstractSampler, MetropolisLocal, Metropolis, thermalize!, update!, init_
 export AutoRegressiveSampler, autoregressivesampling
 # batchautoregressivesampling with various constrains
 export BatchAutoRegressiveSampler
-export AbstractConstrain, satisfied
-export NoConservation, NodeConservationConstrain, RootConservationConstrain, LeafConservationConstrain
-export U1LeafConservation, U1NodeConservation, U1U1LeafConservation, U1U1NodeConservation
+export AbstractSymmetryConstrain, satisfied
+export NoConstrain, MaskUnphysical, DiscardUnphysical
+export U1Discard, U1Mask, U1U1Discard, U1U1Mask
 
 # hamiltonian
 export Hamiltonian, coupled_states, diagonal_coupling

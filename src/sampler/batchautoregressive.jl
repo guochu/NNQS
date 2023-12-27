@@ -1,17 +1,17 @@
 
 
-struct BatchAutoRegressiveSampler{T<:AbstractConstrain} <: AbstractSampler
+struct BatchAutoRegressiveSampler{T<:AbstractSymmetryConstrain} <: AbstractSampler
 	constrain::T
 	N::Int
 	n_sample_per_chain::Int
 end
 
-BatchAutoRegressiveSampler(constrain::AbstractConstrain, N::Int; n_sample_per_chain::Int=500) = BatchAutoRegressiveSampler(constrain, N, n_sample_per_chain)
-BatchAutoRegressiveSampler(N::Int; constrain::AbstractConstrain=NoConservation(), kwargs...) = BatchAutoRegressiveSampler(constrain, N; kwargs...)
+BatchAutoRegressiveSampler(constrain::AbstractSymmetryConstrain, N::Int; n_sample_per_chain::Int=500) = BatchAutoRegressiveSampler(constrain, N, n_sample_per_chain)
+BatchAutoRegressiveSampler(N::Int; constrain::AbstractSymmetryConstrain=NoConstrain(), kwargs...) = BatchAutoRegressiveSampler(constrain, N; kwargs...)
 
-batchautoregressivesampling(nnqs::AbstractNNQS, n::Int, constrain::AbstractConstrain) = error("batchautoregressivesampling not implemented for nqs type $(typeof(nnqs))")
+batchautoregressivesampling(nnqs::AbstractNNQS, n::Int, constrain::AbstractSymmetryConstrain) = error("batchautoregressivesampling not implemented for nqs type $(typeof(nnqs))")
 
-function batchautoregressivesampling(nnqs::MPS, n::Int, constrain::NoConservation)
+function batchautoregressivesampling(nnqs::MPS, n::Int, constrain::NoConstrain)
 	@assert length(nnqs) > 0
 	@assert isrightcanonical(nnqs)
 	psi = nnqs.data
@@ -56,7 +56,7 @@ function batchautoregressivesampling(nnqs::MPS, n::Int, constrain::NoConservatio
 end
 
 
-function batchautoregressivesampling(nnqs::MPS, n::Int, constrain::LeafConservationConstrain)
+function batchautoregressivesampling(nnqs::MPS, n::Int, constrain::DiscardUnphysical)
 	@assert length(nnqs) > 0
 	@assert isrightcanonical(nnqs)
 	psi = nnqs.data
@@ -103,7 +103,7 @@ function batchautoregressivesampling(nnqs::MPS, n::Int, constrain::LeafConservat
 	return vv2m(unique_samples), counts
 end
 
-function batchautoregressivesampling(nnqs::MPS, n::Int, constrain::NodeConservationConstrain)
+function batchautoregressivesampling(nnqs::MPS, n::Int, constrain::MaskUnphysical)
 	@assert length(nnqs) > 0
 	@assert isrightcanonical(nnqs)
 	psi = nnqs.data
