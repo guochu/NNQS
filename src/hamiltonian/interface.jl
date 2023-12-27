@@ -2,7 +2,8 @@
 abstract type Hamiltonian end
 
 
-Base.eltype(h::Hamiltonian) = error("eltype not implemented for NNQS type $(typeof(h))")
+Base.eltype(::Type{H}) where {H <: Hamiltonian} = error("eltype not implemented for NNQS type $(H)")
+Base.eltype(h::Hamiltonian) = eltype(typeof(h))
 
 """
 	coupled_states(h::Hamiltonian, state::ComputationBasis)
