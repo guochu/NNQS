@@ -21,16 +21,16 @@ export AbstractSampler, MetropolisLocal, Metropolis, thermalize!, update!, init_
 # auto-regressive sampling
 export AutoRegressiveSampler, autoregressivesampling
 # batchautoregressivesampling with various constrains
-export BatchAutoRegressiveSampler
+export BatchAutoRegressiveSampler, batchautoregressivesampling
 export AbstractSymmetryConstrain, satisfied
 export NoConstrain, MaskUnphysical, DiscardUnphysical
 export U1Discard, U1Mask, U1U1Discard, U1U1Mask
 
 # hamiltonian
 export Hamiltonian, coupled_states, diagonal_coupling
-export energy, energy_and_grad, sampling
+export energy, energy_and_grad, energy_and_grad_sr, sampling
 # the exact versions are used for debug
-export energy_exact, energy_and_grad_exact
+export energy_exact, energy_and_grad_exact, energy_and_grad_sr_exact
 
 # utilities
 export IsingChain, HeisenbergChain
