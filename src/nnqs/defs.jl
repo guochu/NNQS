@@ -6,6 +6,9 @@ const ComputationBasis = AbstractVector{Int}
 const BatchComputationBasis = AbstractMatrix{Int}
 const GeneralBasis = AbstractVecOrMat{Int}
 
+Base.eltype(::Type{T}) where {T<:AbstractNNQS} = error("eltype not implemented for NNQS type $(T)")
+Base.eltype(nnqs::AbstractNNQS) = eltype(typeof(nnqs))
+
 Ψ(nnqs::AbstractNNQS, state::GeneralBasis) = _Ψ(nnqs, dropgrad(state))
 
 

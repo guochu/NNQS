@@ -17,6 +17,7 @@ function FCN(::Type{T}; n_visible::Int, n_hidden::Int, activation::Function=Flux
 	m = NN.Dense(W, b, log_cosh)
 	return FCN(m, a, activation)
 end
+Base.eltype(::Type{FCN{D, A, F}}) where {D, A, F} = eltype(A)
 
 Flux.@functor FCN
 

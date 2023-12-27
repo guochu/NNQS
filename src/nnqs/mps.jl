@@ -16,7 +16,7 @@ end
 
 Base.length(x::MPS) = length(x.data)
 Base.eltype(::Type{MPS{T}}) where T = T
-Base.eltype(x::MPS) = eltype(typeof(x))
+
 
 function MPS(::Type{T}, physpaces::Vector{Int}; D::Int) where {T<:Number}
 	virtualpaces = max_bond_dimensions(physpaces, D)
