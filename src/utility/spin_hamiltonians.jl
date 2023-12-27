@@ -4,7 +4,7 @@ struct IsingChain <: Hamiltonian
 end
 
 IsingChain(; h::Real, J::Real) = IsingChain(convert(Float64, h), convert(Float64, J))
-Base.eltype(h::IsingChain) = Float64
+Base.eltype(::Type{IsingChain}) = Float64
 
 function coupled_states(h::IsingChain, state::ComputationBasis)
 	L = length(state)
@@ -39,7 +39,7 @@ struct HeisenbergChain <: Hamiltonian
 end
 
 HeisenbergChain(; J::Real, Jzz::Real, h::Real) = HeisenbergChain(convert(Float64, J), convert(Float64, Jzz), convert(Float64, h))
-Base.eltype(h::HeisenbergChain) = Float64
+Base.eltype(::Type{HeisenbergChain}) = Float64
 
 function coupled_states(h::HeisenbergChain, state::ComputationBasis)
 	L = length(state)
