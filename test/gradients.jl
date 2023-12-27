@@ -85,6 +85,18 @@ end
 				@test abs((E1-E2)/ E1) < tol
 				@test norm(grad1 - grad2) / norm(grad1) < tol
 			end
+			for h in (1, -1)
+				J = 1
+				n_visible = L
+				nqs = MPS(T, n_visible, D=5)
+				ham = IsingChain(h=h, J=J)
+				
+				E1, grad1 = energy_and_grad_sr_exact(ham, nqs)
+				E2, grad2 = energy_and_grad_sr(ham, nqs, sampler, verbosity=0)
+
+				@test abs((E1-E2)/ E1) < tol
+				@test norm(grad1 - grad2) / norm(grad1) < tol
+			end
 		end
 	end	
 end
