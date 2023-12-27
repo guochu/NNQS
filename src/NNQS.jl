@@ -17,7 +17,7 @@ export MPS, rightorth!, rightorth, isrightcanonical, increase_bond!
 # sampler
 export BitFlip, BondSwap, FermiBondSwap, move!
 # Metropolis-Hasting sampling
-export AbstractSampler, MetropolisLocal, Metropolis, thermalize!, update!, init_state, generate_samples
+export AbstractSampler, MetropolisLocal, Metropolis, thermalize!, update!, init_state
 # auto-regressive sampling
 export AutoRegressiveSampler, autoregressivesampling
 # batchautoregressivesampling with various constrains

@@ -21,7 +21,7 @@ function generate_samples(h::Hamiltonian, m::Metropolis, nnqs::AbstractNNQS)
 	end
 	return unique_counts(samples)
 end
-function generate_samples(h::Hamiltonian, m::AutoRegressiveSampler, nnqs::AbstractNNQS)
+function generate_samples(h::Hamiltonian, m::AutoRegressiveSampler, nnqs::MPS)
 	@assert m.N == sys_size(nnqs)
 	samples = zeros(Int, m.N, m.n_sample_per_chain)
 	nnqs2 = rightorth(nnqs, normalize=true)
@@ -30,7 +30,7 @@ function generate_samples(h::Hamiltonian, m::AutoRegressiveSampler, nnqs::Abstra
 	end	
 	return unique_counts(samples)
 end
-function generate_samples(h::Hamiltonian, m::BatchAutoRegressiveSampler, nnqs::AbstractNNQS)
+function generate_samples(h::Hamiltonian, m::BatchAutoRegressiveSampler, nnqs::MPS)
 	@assert m.N == sys_size(nnqs)
 	nnqs2 = rightorth(nnqs, normalize=true)
 	return batchautoregressivesampling(nnqs2, m.n_sample_per_chain, m.constrain)
