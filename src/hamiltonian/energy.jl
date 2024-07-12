@@ -42,13 +42,33 @@ function energy_and_grad_per_rank(h::Hamiltonian, nnqs::AbstractNNQS, sampler::A
 end
 
 function energy_and_grad_per_chain(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler)
-	mean_energy, back = Zygote.pullback(energy, h, nnqs, sampler)
+	mean_energy, back = Zygote.pullback(_energy, h, nnqs, sampler)
 	_a, grad, _b = back(one(mean_energy))
 	@assert isnothing(_a) && isnothing(_b)
 	return mean_energy, grad
 end
 
-function energy(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler)
+function energy(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler; n_chain::Int=10, seeds::Union{Vector{Int}, Nothing}=nothing)
+	function f_per_chain(_seed)
+		Random.seed!(_seed)
+		_E = _energy(h, nnqs, sampler)
+		return _E
+	end
+	if isnothing(seeds)
+		seeds = rand(1000:100000, n_chain)
+	else
+		@assert length(seeds) == n_chain
+	end
+	
+	energies = f_per_chain.(seeds)
+	E_loc = mean(energies)
+	if verbosity >= 1
+		println("Ē = $E_loc ± $(std(energies))")
+	end
+	return E_loc
+end
+
+function _energy(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler)
 	unique_samples, counts = sampling(h, nnqs, sampler)
 	amps = Ψ(nnqs, unique_samples)
 	_energies = local_energies(h, nnqs, unique_samples, amps)
@@ -56,7 +76,7 @@ function energy(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler)
 	return real(dot(weights, _energies))
 end
 
-Zygote.@adjoint energy(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler) = begin
+Zygote.@adjoint _energy(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler) = begin
 	unique_samples, counts = sampling(h, nnqs, sampler)
 	amps, amps_back = Zygote.pullback(Ψ, nnqs, unique_samples)
 	_energies = local_energies(h, nnqs, unique_samples, amps)
