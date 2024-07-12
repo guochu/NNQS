@@ -48,7 +48,7 @@ function energy_and_grad_per_chain(h::Hamiltonian, nnqs::AbstractNNQS, sampler::
 	return mean_energy, grad
 end
 
-function energy(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler; n_chain::Int=10, seeds::Union{Vector{Int}, Nothing}=nothing)
+function energy(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler; n_chain::Int=10, seeds::Union{Vector{Int}, Nothing}=nothing, verbosity::Int=1)
 	function f_per_chain(_seed)
 		Random.seed!(_seed)
 		_E = _energy(h, nnqs, sampler)
