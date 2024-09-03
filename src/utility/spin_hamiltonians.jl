@@ -31,6 +31,57 @@ function diagonal_coupling(h::IsingChain, state::ComputationBasis)
 	return E_diag
 end
 
+struct Ising2D <: Hamiltonian
+	shape::Tuple{Int, Int}
+	h::Float64
+	J::Float64
+	periodic::Bool
+end
+Ising2D(shape::Tuple{Int, Int}; h::Real, J::Real, periodic::Bool=false) = Ising2D(shape, convert(Float64, h), convert(Float64, J), periodic)
+Base.eltype(::Type{Ising2D}) = Float64
+
+function coupled_states(h::Ising2D, state::ComputationBasis)
+	L = length(state)
+	@assert prod(h.shape) == L
+	c_states = zeros(Int, L, L)
+	coefs = zeros(Float64, L)
+	for j in 1:L
+		new_state = copy(state)
+		new_state[j] = -state[j]
+		c_states[:, j] = new_state
+		coefs[j] = h.h
+	end
+	return c_states, coefs
+end
+
+function diagonal_coupling(h::Ising2D, state::ComputationBasis)
+	@assert prod(h.shape) == length(state)
+	m, n = h.shape
+	index = LinearIndices(h.shape)
+	E_diag = 0.
+	if h.periodic
+		for i in 1:m, j in 1:n
+			idx1, idx2 = index[i, j], index[mod1(i+1, m), j]
+			E_diag += h.J * state[idx1] * state[idx2]
+			idx2 = index[i, mod1(j+1, n)]
+			E_diag += h.J * state[idx1] * state[idx2]
+		end
+	else
+		for i in 1:m
+			for j in 1:n-1
+				idx1, idx2 = index[i, j], index[i, j+1]
+				E_diag += h.J * state[idx1] * state[idx2]
+			end
+		end
+		for j in 1:n
+			for i in 1:m-1
+				idx1, idx2 = index[i, j], index[i, j]
+				E_diag += h.J * state[idx1] * state[idx2]
+			end
+		end
+	end
+	return E_diag
+end
 
 struct HeisenbergChain <: Hamiltonian
 	J::Float64
