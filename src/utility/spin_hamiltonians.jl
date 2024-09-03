@@ -75,7 +75,7 @@ function diagonal_coupling(h::Ising2D, state::ComputationBasis)
 		end
 		for j in 1:n
 			for i in 1:m-1
-				idx1, idx2 = index[i, j], index[i, j]
+				idx1, idx2 = index[i, j], index[i+1, j]
 				E_diag += h.J * state[idx1] * state[idx2]
 			end
 		end
