@@ -33,7 +33,7 @@ export energy, energy_and_grad, energy_and_grad_sr, sampling
 export energy_exact, energy_and_grad_exact, energy_and_grad_sr_exact
 
 # utilities
-export IsingChain, Ising2D, HeisenbergChain
+export IsingChain, Ising2D, HeisenbergChain, Heisenberg2D
 
 using Random, LinearAlgebra, Statistics, Distributions
 using Zygote, Flux
