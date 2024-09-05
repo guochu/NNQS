@@ -85,7 +85,7 @@ struct HeisenbergChain <: Hamiltonian
 	h::Float64
 end
 
-HeisenbergChain(; J::Real, Jzz::Real=J, h::Real=0) = HeisenbergChain(convert(Float64, J), convert(Float64, Jzz), convert(Float64, h))
+HeisenbergChain(; J::Real=1, Jzz::Real=J, h::Real=0) = HeisenbergChain(convert(Float64, J), convert(Float64, Jzz), convert(Float64, h))
 Base.eltype(::Type{HeisenbergChain}) = Float64
 
 function coupled_states(h::HeisenbergChain, state::ComputationBasis)
@@ -131,7 +131,7 @@ struct Heisenberg2D <: Hamiltonian
 	periodic::Bool
 end
 
-Heisenberg2D(shape::Tuple{Int, Int}; J::Real, Jzz::Real=J, h::Real=0, periodic::Bool=false) = Heisenberg2D(shape, convert(Float64, J), convert(Float64, Jzz), convert(Float64, h), periodic)
+Heisenberg2D(shape::Tuple{Int, Int}; J::Real=1, Jzz::Real=J, h::Real=0, periodic::Bool=false) = Heisenberg2D(shape, convert(Float64, J), convert(Float64, Jzz), convert(Float64, h), periodic)
 Base.eltype(::Type{Heisenberg2D}) = Float64
 
 function coupled_states(h::Heisenberg2D, state::ComputationBasis)
