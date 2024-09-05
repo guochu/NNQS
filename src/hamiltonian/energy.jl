@@ -5,6 +5,26 @@
 function energy_and_grad(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler; n_chain::Int=10, 
 	seeds::Union{Vector{Int}, Nothing}=nothing, λ::Real = 1.0e-6, verbosity::Int=1)
 	energies_and_grads = energy_and_grad_per_rank(h, nnqs, sampler, n_chain=n_chain, seeds=seeds)
+	# energy, grad = energies_and_grads[1]
+	# energies = zeros(typeof(energy), length(energies_and_grads))
+	# energies[1] = energy
+	# for i in 2:length(energies_and_grads)
+	# 	a, b = energies_and_grads[i]
+	# 	grad .+= b
+	# 	energies[i] = a
+	# end
+	energies, grad = collect_energies_and_grad(energies_and_grads)
+	E_loc = mean(energies)
+	
+	if verbosity >= 1
+		println("Ē = $E_loc ± $(std(energies))")
+	end
+
+	return E_loc, _regularization!(grad, Flux.destructure(nnqs)[1], λ)
+end
+
+function collect_energies_and_grad(energies_and_grads)
+	isempty(energies_and_grads) && throw(ArgumentError("energies_and_grads should not be empty"))
 	energy, grad = energies_and_grads[1]
 	energies = zeros(typeof(energy), length(energies_and_grads))
 	energies[1] = energy
@@ -12,15 +32,9 @@ function energy_and_grad(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSa
 		a, b = energies_and_grads[i]
 		grad .+= b
 		energies[i] = a
-	end
-	E_loc = mean(energies)
+	end	
 	grad ./= length(energies_and_grads)
-
-	if verbosity >= 1
-		println("Ē = $E_loc ± $(std(energies))")
-	end
-
-	return E_loc, _regularization!(grad, Flux.destructure(nnqs)[1], λ)
+	return energies, grad
 end
 
 function energy_and_grad_per_rank(h::Hamiltonian, nnqs::AbstractNNQS, sampler::AbstractSampler; n_chain::Int=10, 
