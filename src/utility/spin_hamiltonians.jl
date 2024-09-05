@@ -194,15 +194,15 @@ function diagonal_coupling(h::Heisenberg2D, state::ComputationBasis)
 	return E_diag
 end
 
-function set_XXX2D_coupled_states!(c_states::Vector{Vector{Int}}, coefs::Vector{<:Number}, state::Vector{Int}, i::Int, j::Int, J::Real)
-	if (state[i] == -1) && (state[j] = 1)
+function set_XXX2D_coupled_states!(c_states::Vector{Vector{Int}}, coefs::Vector{<:Number}, state::AbstractVector{Int}, i::Int, j::Int, J::Real)
+	if (state[i] == -1) && (state[j] == 1)
 		new_state = copy(state)
 		new_state[i] = 1
 		new_state[j] = -1
 		push!(c_states, new_state)
 		push!(coefs, 2*J)
 	end
-	if (state[i] == 1) && (state[j] = -1)
+	if (state[i] == 1) && (state[j] == -1)
 		new_state = copy(state)
 		new_state[i] = -1
 		new_state[j] = 1
