@@ -9,7 +9,7 @@ const GeneralBasis = AbstractVecOrMat{Int}
 Base.eltype(::Type{T}) where {T<:AbstractNNQS} = error("eltype not implemented for NNQS type $(T)")
 Base.eltype(nnqs::AbstractNNQS) = eltype(typeof(nnqs))
 
-Ψ(nnqs::AbstractNNQS, state::GeneralBasis; kwargs...) = _Ψ(nnqs, dropgrad(state); kwargs...)
+Ψ(nnqs::AbstractNNQS, state::GeneralBasis, args...) = _Ψ(nnqs, dropgrad(state), args...)
 
 
 # interfaces that should be implemented by a customized NNQS model
@@ -32,8 +32,8 @@ Base.eltype(nnqs::AbstractNNQS) = eltype(typeof(nnqs))
 	In the future I may consider use a machine learning framework such as Flux as the backend, then one would 
 	be able to use the parameters deduction mechanism of Flux and 3,4,5) will no longer be required.
 """
-_Ψ(nnqs::AbstractNNQS, state::ComputationBasis; kwargs...) = error("_Ψ not defined for NNQS type $(typeof(nnqs)).")
-_Ψ(nnqs::AbstractNNQS, state::BatchComputationBasis; kwargs...) = transpose([_Ψ(nnqs, view(state, :, j); kwargs...) for j in 1:size(state, 2)])
+_Ψ(nnqs::AbstractNNQS, state::ComputationBasis, args...) = error("_Ψ not defined for NNQS type $(typeof(nnqs)).")
+_Ψ(nnqs::AbstractNNQS, state::BatchComputationBasis, args...) = transpose([_Ψ(nnqs, view(state, :, j), args...) for j in 1:size(state, 2)])
 
 # used for exact sampler
 sys_size(nnqs::AbstractNNQS) = error("sys_size not implemented for NNQS type $(typeof(nnqs)).")
