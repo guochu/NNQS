@@ -18,7 +18,7 @@ println("------------------------------------")
 			loss(p) = loss_origin(re(p))
 
 
-			out1 = gradient(nn -> loss_origin(nn), nqs)
+			out1 = Zygote.gradient(nn -> loss_origin(nn), nqs)
 			grad1 = Flux.destructure(out1)[1]
 			grad2 = fdm_gradient(loss, x0)
 
@@ -37,7 +37,7 @@ println("------------------------------------")
 			loss_origin(nn) = real(sum(Ψ(nn, state)))
 			loss(p) = loss_origin(re(p))
 
-			out1 = gradient(nn -> loss_origin(nn), nqs)
+			out1 = Zygote.gradient(nn -> loss_origin(nn), nqs)
 			grad1 = Flux.destructure(out1)[1]
 			grad2 = fdm_gradient(loss, x0)
 
